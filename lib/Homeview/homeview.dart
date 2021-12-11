@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:flutter_application_2/Utils.dart';
@@ -24,8 +26,8 @@ class _TodoHomeState extends State<TodoHome> {
     },
     {
 'title':'Trip to Dubai',
-'description': 'This trip will last a month, and i intend going with you guys and my mom',
-'date_time':'24/12/2021',
+'description': 'This \"trip will last a month, and i intend going with you guys and my mom',
+'date_time':'Today',
 'status':false,
     },
 
@@ -52,7 +54,9 @@ else{
   uncompleted.add(element);
 }
       }
+      Timer(const Duration(seconds: 10), () => callback());
     }
+    String isloaded = 'Todo';
   int count = 3;
   void callback() {
     setState(() {
@@ -84,11 +88,20 @@ else{
         ],
       ),
       body:ListView.separated(itemBuilder: (context, index) {
-        return Todo_Tile();
+        return count ==0?
+        SkeletonAnimation(
+          shimmerColor: customColor(date: 'appbarColor'),
+          child: Todo_Tile(title: '', description: '', dateTime: '', status: false))
+        :Todo_Tile(
+          title: isloaded =='Todo'?uncompleted[index]['title']:completed[index]['title'],
+           description: isloaded =='Todo'?uncompleted[index]['description']:completed[index]['description'],
+            dateTime: isloaded =='Todo'?uncompleted[index]['dateTime']:completed[index]['dateTime'],
+             status: isloaded == 'Todo'?uncompleted[index]['status']:completed[index]['status'],
+             );
       },  separatorBuilder: (context, index) {
         return SizedBox(height: 5,);
       },
-       itemCount: 2),
+       itemCount: uncompleted.length),
       floatingActionButton: FloatingActionButton(
         onPressed:() {
           Navigator.push(context, MaterialPageRoute(builder: (context){
@@ -104,7 +117,12 @@ else{
                context: context,
                 builder: (context) {
                   return ListView.separated(itemBuilder: (context,  index) {
-                    return Todo_Tile();
+                    return Todo_Tile(
+                      title: completed[index]['Title'],
+                       description: completed[index]['Description'],
+                        dateTime: completed[index]['dateTime'],
+                         status: completed[index]['status'],
+                         );
                   },
                    separatorBuilder: (context, index) {
                      return const SizedBox(
@@ -112,7 +130,7 @@ else{
 
                      );
                    },
-                    itemCount: 2);
+                    itemCount: uncompleted.length);
                 }); 
             },
             child: Container(
